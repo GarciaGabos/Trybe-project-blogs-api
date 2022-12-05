@@ -7,16 +7,17 @@ app.use(express.json());
 
 const validateJWT = require('./auth/validateJWT');
 
-const user = require('./controllers/user.controllers');
+const userController = require('./controllers/user.controllers');
 
 const userValidations = require('./middlewares/userValidations');
 
-app.post('/login', userValidations.validateLogin, user.userLogin);
+app.post('/login', userValidations.validateLogin, userController.userLogin);
 
-app.post('/user', userValidations.validateEmail, userValidations.validadeNewUser, user.userAdd);
+app.post('/user', userValidations.validateEmail,
+ userValidations.validadeNewUser, userController.userAdd);
 
-app.get('/user', validateJWT, user.userListAll);
+app.get('/user', validateJWT, userController.userListAll);
 
-// app.get('/user', user.userListById);
+app.get('/user/:id', validateJWT, userController.userListById);
 
 module.exports = app;

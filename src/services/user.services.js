@@ -1,10 +1,5 @@
 const { User } = require('../models');
 
-const getByUserId = async (id) => {
-  const user = await User.findByPk(id);
-  return user;
-};
-
 const userLogin = async (email, password) => {
   const user = await User.findOne({ where: { email, password } });
   return user;
@@ -20,6 +15,11 @@ const userAddUser = async (email, password, displayName) => {
 
 const userAll = async () => {
   const user = await User.findAll({ attributes: { exclude: ['password'] } });
+  return user;
+};
+
+const getByUserId = async (id) => {
+  const user = await User.findOne({ where: { id }, attributes: { exclude: ['password'] } });
   return user;
 };
 
