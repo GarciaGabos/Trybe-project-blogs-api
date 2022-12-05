@@ -3,19 +3,22 @@ const jwt = require('jsonwebtoken');
 
 const UserServices = require('../services/user.services');
 
-const secret = process.env.JWT_SECRET || 'seusecretdetoken';
+const secret = process.env.JWT_SECRET;
 
 const userLogin = async (req, res) => {
-    const { email, password } = req.body;
-    const foundUser = await UserServices.userLogin(email, password);
-    if (!foundUser) return res.status(400).json({ message: 'Invalid fields' });
-    const jwtConfig = {
-      expiresIn: '7d',
-      algorithm: 'HS256',
-    };
-    console.log(foundUser);
-    const token = jwt.sign({ data: { user: foundUser } }, secret, jwtConfig);
-    return res.status(200).json({ token });
+  const { email, password } = req.body;
+  const user = await UserServices.userLogin(email, password);
+  if (!user) return res.status(400).json({ message: 'Invalid fields' });
+  const jwtConfig = {
+    algorithm: 'HS256',
+    expiresIn: '7d',
+  };
+  console.log(user.dataValues.id);
+  // const { id } = user;
+  // console.log(id);
+  console.log(secret);
+  const token = jwt.sign({ data: { userId: user.dataValues.id } }, secret, jwtConfig);
+  return res.status(200).json({ token });
 };
 
 const userAdd = async (req, res) => {
@@ -26,12 +29,26 @@ const userAdd = async (req, res) => {
     expiresIn: '7d',
     algorithm: 'HS256',
   };
-  console.log(created);
-  const token = jwt.sign({ data: { user } }, secret, jwtConfig);
+  const { id } = user;
+  const token = jwt.sign({ data: { userId: id } }, secret, jwtConfig);
   return res.status(201).json({ token });
+};
+
+const userListAll = async (_req, res) => {
+  const user = await UserServices.userAll();
+  console.log(user.dataValues);
+  return res.status(200).json(user);
+};
+
+const userListById = async (req, res) => {
+  const { id } = req.body;
+  const user = await UserServices.getByUserId(id);
+  return res.status(200).json({ user });
 };
 
 module.exports = {
   userLogin,
   userAdd,
+  userListAll,
+  userListById,
 };
