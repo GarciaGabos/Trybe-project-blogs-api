@@ -9,6 +9,7 @@ const validateJWT = require('./auth/validateJWT');
 
 const userController = require('./controllers/user.controllers');
 const categoriesController = require('./controllers/categories.controllers');
+const postsController = require('./controllers/posts.controllers');
 
 const userValidations = require('./middlewares/userValidations');
 
@@ -24,5 +25,9 @@ app.get('/user/:id', validateJWT, userController.userListById);
 app.post('/categories', validateJWT, categoriesController.postNewCategory);
 
 app.get('/categories', validateJWT, categoriesController.categoryListAll);
+
+app.post('/post', validateJWT, postsController.postNewPost);
+
+app.get('/post', validateJWT, postsController.listAllPost);
 
 module.exports = app;
